@@ -1,6 +1,6 @@
 {
   "name": "picgo-plugin-custom-uploader",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "自定义图床",
   "main": "src/index.js",
   "publishConfig": {
