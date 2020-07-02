@@ -1,0 +1,1 @@
+# picgo-plugin-custom-uploader
