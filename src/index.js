@@ -121,11 +121,11 @@ module.exports = (ctx) => {
         name: 'headers',
         type: 'input',
         default: userConfig.headers || '{}',
-        required: true,
+        required: false,
         message: '填入header key-value json'
       },
       {
-        alias: 'response url path (eg: data.url)',
+        alias: '图片URL路径',
         name: 'jsonPath',
         type: 'input',
         default: userConfig.jsonPath || '',
