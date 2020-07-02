@@ -1,7 +1,7 @@
 const sha1 = require('js-sha1')
 
 module.exports = (ctx) => {
-  const postOptions = (image, url, postFileName, fileName) => {
+  const postOptions = (image, url, postFileName, fileName, headers) => {
     const opts = {
       method: 'POST',
       url: url,
@@ -15,6 +15,18 @@ module.exports = (ctx) => {
     opts.formData[postFileName].options = {
       filename: fileName
     }
+    try {
+      headers = JSON.parse(headers)
+      for (let key in headers) {
+        opts.headers[key] = headers[key]
+      }
+    } catch (e) {
+      ctx.emit('notification', {
+        title: 'headers 解析失败！',
+        body: e.error
+      })
+    }
+
     return opts
   }
 
@@ -24,6 +36,8 @@ module.exports = (ctx) => {
       throw new Error('Can\'t find uploader config')
     }
     let url = userConfig.url
+    const headers = userConfig.headers
+
     const needFileNameUrl = userConfig.needFileNameUrl
     const postFileName = userConfig.postFileName
     const jsonPath = userConfig.jsonPath
@@ -38,7 +52,9 @@ module.exports = (ctx) => {
           let newfilename = sha1(timestamp.toString()) + '.' + extension.toLowerCase()
           url = url + '/' + newfilename
         }
-        const options = postOptions(image, url, postFileName, imgList[i].fileName)
+
+        const options = postOptions(image, url, postFileName, imgList[i].fileName, headers)
+
         let res = await ctx.Request.request(options)
 
         delete imgList[i].base64Image
@@ -77,6 +93,7 @@ module.exports = (ctx) => {
     }
     return [
       {
+        alias: 'API地址',
         name: 'url',
         type: 'input',
         default: userConfig.url || '',
@@ -84,6 +101,7 @@ module.exports = (ctx) => {
         message: 'API地址'
       },
       {
+        alias: 'API地址是否拼接文件名',
         name: 'needFileNameUrl',
         type: 'confirm',
         default: userConfig.needFileNameUrl || true,
@@ -91,6 +109,7 @@ module.exports = (ctx) => {
         message: 'API地址是否拼接文件名'
       },
       {
+        alias: 'POST file name',
         name: 'postFileName',
         type: 'input',
         default: userConfig.postFileName || '',
@@ -98,6 +117,15 @@ module.exports = (ctx) => {
         message: 'POST文件参数名'
       },
       {
+        alias: 'POST headers',
+        name: 'headers',
+        type: 'input',
+        default: userConfig.headers || '{}',
+        required: true,
+        message: '填入header key-value json'
+      },
+      {
+        alias: 'response url path (eg: data.url)',
         name: 'jsonPath',
         type: 'input',
         default: userConfig.jsonPath || '',
