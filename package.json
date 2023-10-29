@@ -1,7 +1,7 @@
 {
-  "name": "picgo-plugin-custom-uploader",
-  "version": "1.0.3",
-  "description": "自定义图床",
+  "name": "xh-uploader",
+  "version": "1.0.0",
+  "description": "苦作舟图床",
   "main": "src/index.js",
   "publishConfig": {
     "access": "public"
